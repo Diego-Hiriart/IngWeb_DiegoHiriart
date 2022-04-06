@@ -84,12 +84,12 @@ namespace WebAPI_DiegoHiriart.Controllers
             }    
         }
 
-        [HttpGet("{id}")]//Maps this method to the GET request (read) for a specific ID
-        public async Task<ActionResult<List<User>>> ReadUserByID(int id)
+        [HttpGet("{email}")]//Maps this method to the GET request (read) for a specific email
+        public async Task<ActionResult<List<User>>> ReadUserByID(string email)
         {
             List<User> users = new List<User>();
             string db = APIConfig.ConnectionString;
-            string readUsers = "SELECT * FROM Users WHERE UserID = @0";
+            string readUsers = "SELECT * FROM Users WHERE Email LIKE @0";//WHERE string LIKE %substring%
             try
             {
                 using (SqlConnection conn = new SqlConnection(db))
@@ -100,7 +100,7 @@ namespace WebAPI_DiegoHiriart.Controllers
                         using (SqlCommand cmd = conn.CreateCommand())
                         {
                             cmd.CommandText = readUsers;
-                            cmd.Parameters.AddWithValue("@0", id);
+                            cmd.Parameters.AddWithValue("@0", "%"+email+"%");//%substring%
                             using (SqlDataReader reader = cmd.ExecuteReader())
                             {
                                 while (reader.Read())

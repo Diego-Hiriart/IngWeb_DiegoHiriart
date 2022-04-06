@@ -1,4 +1,5 @@
 ﻿//Diego Hiriart Leon
+
 namespace WebAPI_DiegoHiriart
 {
     public static class APIConfig
@@ -8,5 +9,6 @@ namespace WebAPI_DiegoHiriart
         //@"Data Source=DIEGOHL\SQLEXPR;Database=IngWebPrd;Integrated Security=SSPI"
 
         public static string ConnectionString { get => connectionString; set => connectionString = value; }
+
     }
 }

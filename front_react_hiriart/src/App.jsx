@@ -1,7 +1,8 @@
 import React from "react";
 import {BrowserRouter as Router, Routes, Route, Link} from "react-router-dom";
 import Login from "./Views/Login";
-import Users from "./Views/Users";
+import UsersMenu from "./Views/Users/UsersMenu";
+import GetUsers from "./Views/Users/GetUsers";
 import Home from "./Views/Home";
 import Error from "./Views/404";
 
@@ -16,7 +17,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home/>}/>{/*The "" path redirects to the component*/}
           <Route path="/login" element={<Login/>}/>
-          <Route path="/users" element={<Users/>}/>
+          <Route path="/users" element={<UsersMenu/>}/>
+          <Route path="/users/get" element={<GetUsers/>}/>
           <Route path="*" element={<Error/>}/>{/*If a bad route is given*/}
         </Routes>
       </Router>

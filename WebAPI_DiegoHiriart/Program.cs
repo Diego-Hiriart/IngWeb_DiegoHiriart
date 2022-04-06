@@ -1,4 +1,18 @@
+//Diego Hiriart
+
+//Allow Cross Origin Resource Sharing
+var AllowLocalhostOrigins = "AllowLocalhostOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: AllowLocalhostOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:3000");//Only the front end address can use it
+                      });
+});
 
 // Add services to the container.
 
@@ -17,6 +31,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+//app.UseRouting();//Wasnt here before, added in case CORS needs it, might not be the case
+
+app.UseCors(AllowLocalhostOrigins);//Use the CORS policy, after UseRouting, before UseAuthorization
 
 app.UseAuthorization();
 
