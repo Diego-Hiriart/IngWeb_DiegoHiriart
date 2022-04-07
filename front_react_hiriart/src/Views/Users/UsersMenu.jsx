@@ -11,8 +11,8 @@ function UsersMenu(){
             <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>
                 <button onClick={() => {navigate("/users/get")}}>Get all users</button>
                 <button onClick={() => {navigate("/users/search")}}>Search for a user</button>
-                <button>Create new user</button>
-                <button>Edit user</button>
+                <button onClick={() => {navigate("/users/create")}}>Create new user</button>
+                <button onClick={() => {navigate("/users/edit")}}>Edit user</button>
                 <button>Delete user</button>
             </div>
         </div>

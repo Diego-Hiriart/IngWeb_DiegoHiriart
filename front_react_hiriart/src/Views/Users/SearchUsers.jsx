@@ -1,9 +1,9 @@
 import {React, useState } from "react";
 
 function SearchUsers(){
-    const urlGet = 'https://localhost:7017/api/users/'
+    const urlGet = 'https://localhost:7017/api/users/partial-match/'
     const [users, setUsers] = useState(null);{/*users is empty by default */}
-    const [state, setState] = useState(//"state" object
+    const [searchParam, setSearchParam] = useState(//"searchParam" object
         {
             email: ''//property
         }
@@ -11,19 +11,24 @@ function SearchUsers(){
 
     //Function to send GET request
     function search(){
-        fetch(urlGet+state.email)
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        fetch(urlGet+searchParam.email, requestOptions)
             .then(res => res.json())
             .then(json => setUsers(json));
     } 
 
-    function getInput(evt){
+    function getSearchInput(evt){
         const value = evt.target.value //The value that input has
-        setState({
-            ...state,//A single state with many properties has to be spread (...state), that is spread the existing state into the new one, merging them
+        setSearchParam({
+            ...searchParam,//A single searchParam with many properties has to be spread (...searchParam), that is spread the existing searchParam into the new one, merging them
             [evt.target.name]: value//The name the input has (same as the property from state we want ot link it to) is the value of the input
         });
     }
 
+    const inputStyle = {'margin':'2px'};
     const tableStyle = {"borderWidth":"1px", 'borderColor':"#aaaaaa", 'borderStyle':'solid', 'padding':'5px'};
 
     const content =
@@ -33,10 +38,10 @@ function SearchUsers(){
                 <p>Input the email you are searching for (supports partial match)</p>                  
             </div>
             <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'10%'}}>
-                {/*Input needs name to be the same as the property in state we want ot link it to, state value makes it a controlled component, 
+                {/*Input needs name to be the same as the property in stsearchParamate we want ot link it to, searchParam value makes it a controlled component, 
                 onChange allows to get handle the value and get it every time the is a change*/}
-                <input type="text" name="email" value={state.email} onChange={getInput} placeholder="email" style={{margin:'2px'}}></input>
-                <button style={{margin:'2px'}} onClick={search}>Search</button>
+                <input type="text" name="email" value={searchParam.email} onChange={getSearchInput} placeholder="email" style={inputStyle}></input>
+                <button style={inputStyle} onClick={search}>Search</button>
                 <br/>                
             </div>
             <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>

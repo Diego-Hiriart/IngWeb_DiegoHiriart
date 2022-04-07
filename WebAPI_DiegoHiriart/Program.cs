@@ -1,6 +1,8 @@
 //Diego Hiriart
 
 //Allow Cross Origin Resource Sharing
+using Microsoft.Net.Http.Headers;
+
 var AllowLocalhostOrigins = "AllowLocalhostOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: AllowLocalhostOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:3000");//Only the front end address can use it
+                          policy.WithOrigins("http://localhost:3000")//Only the front end address can use it
+                          .WithHeaders(HeaderNames.ContentType);//Allow content type to be in header
+                          //.WithMethods("POST", "GET", "PUT", "DELETE");//Allow all methods
+
                       });
 });
 

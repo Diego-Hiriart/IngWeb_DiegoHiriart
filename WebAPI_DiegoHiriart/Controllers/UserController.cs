@@ -16,6 +16,11 @@ namespace WebAPI_DiegoHiriart.Controllers
         {
             string db = APIConfig.ConnectionString;
             string createUser = "INSERT INTO Users(Email, Password, Username) values(@0, @1, @2)";
+            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password)
+                || string.IsNullOrEmpty(user.Username))//Do no create if data not complete
+            {
+                return BadRequest("Incomplete data");
+            }
             try
             {
                 using (SqlConnection conn = new SqlConnection(db))
@@ -81,11 +86,57 @@ namespace WebAPI_DiegoHiriart.Controllers
             {
                 Debug.WriteLine("Exception: " + eSql.Message);
                 return StatusCode(500);
-            }    
+            }
         }
 
-        [HttpGet("{email}")]//Maps this method to the GET request (read) for a specific email
-        public async Task<ActionResult<List<User>>> ReadUserByID(string email)
+        [HttpGet("full-match/{email}")]//Maps this method to the GET request (read) for a specific email
+        public async Task<ActionResult<List<User>>> ReadUserEmailFullMatch(string email)
+        {
+            List<User> users = new List<User>();
+            string db = APIConfig.ConnectionString;
+            string readUsers = "SELECT * FROM Users WHERE Email = @0";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(db))
+                {
+                    conn.Open();
+                    if (conn.State == ConnectionState.Open)
+                    {
+                        using (SqlCommand cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = readUsers;
+                            cmd.Parameters.AddWithValue("@0", email);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    var user = new User();
+                                    user.UserID = reader.GetInt64(0);//Get a long int from the first column
+                                    //Use castings so that nulls get created if needed
+                                    user.Email = reader[1] as string;
+                                    user.Password = reader[2] as string;
+                                    user.Username = reader[3] as string;
+                                    users.Add(user);//Add user to list
+                                }
+                            }
+                        }
+                    }
+                }
+                if (users.Count > 0)
+                {
+                    return Ok(users);
+                }
+            }
+            catch (Exception eSql)
+            {
+                Debug.WriteLine("Exception: " + eSql.Message);
+                return StatusCode(500);
+            }
+            return BadRequest("User not found");
+        }
+
+        [HttpGet("partial-match/{email}")]//Maps this method to the GET request (read) for a partial email
+        public async Task<ActionResult<List<User>>> ReadUserEmailPartialMatch(string email)
         {
             List<User> users = new List<User>();
             string db = APIConfig.ConnectionString;
@@ -130,11 +181,16 @@ namespace WebAPI_DiegoHiriart.Controllers
             return BadRequest("User not found");
         }
 
-        [HttpPut]//Maps the method to PUT, that is update a Hero
+        [HttpPut]//Maps the method to PUT, that is update a User
         public async Task<IActionResult> UpdateUser(User user)
         {
             string db = APIConfig.ConnectionString;
             string updateUser = "UPDATE Users SET Email=@0, Password=@1, UserName=@2 WHERE Email = @3";
+            if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password)
+                || string.IsNullOrEmpty(user.Username))//Do no alter if data not complete
+            {
+                return BadRequest("Incomplete data or non-existent user");
+            }
             try
             {
                 int affectedRows = 0;

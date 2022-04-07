@@ -6,7 +6,11 @@ function GetUsers(){
 
     //Function to send GET request
     const getAll = () => {
-        fetch(urlGet)
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        fetch(urlGet, requestOptions)
             .then(res => res.json())
             .then(json => setUsers(json));
     }
