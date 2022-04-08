@@ -3,6 +3,7 @@ import {React, useState } from "react";
 function SearchUsers(){
     const urlGet = 'https://localhost:7017/api/users/partial-match/'
     const [users, setUsers] = useState(null);{/*users is empty by default */}
+    const [successGet, setSuccessGet] = useState(null);
     const [searchParam, setSearchParam] = useState(//"searchParam" object
         {
             email: ''//property
@@ -16,8 +17,15 @@ function SearchUsers(){
             headers: { 'Content-Type': 'application/json' },
         };
         fetch(urlGet+searchParam.email, requestOptions)
-            .then(res => res.json())
-            .then(json => setUsers(json));
+            .then(res => {
+                if(res.ok){
+                    res.json()
+                    .then(json => setUsers(json));
+                    setSuccessGet(true);
+                }else{
+                    setSuccessGet(false);
+                }
+            })
     } 
 
     function getSearchInput(evt){
@@ -37,14 +45,17 @@ function SearchUsers(){
                 <h1>Search users</h1>
                 <p>Input the email you are searching for (supports partial match)</p>                  
             </div>
-            <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'10%'}}>
+            <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'40%'}}>
                 {/*Input needs name to be the same as the property in stsearchParamate we want ot link it to, searchParam value makes it a controlled component, 
                 onChange allows to get handle the value and get it every time the is a change*/}
                 <input type="text" name="email" value={searchParam.email} onChange={getSearchInput} placeholder="email" style={inputStyle}></input>
+            </div>
+            <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'10%'}}>
                 <button style={inputStyle} onClick={search}>Search</button>
                 <br/>                
             </div>
-            <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>
+            <div style={{display: 'flex', flexDirection:'column', justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>
+                <h5><b>{successGet == false ? "No users found with requested email" : "Search for a user by email"}</b></h5>
                 <table style={tableStyle}>
                     <thead>
                         <tr style={tableStyle}>
@@ -54,20 +65,20 @@ function SearchUsers(){
                             <th style={tableStyle}>Username</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {/* the {coondition && stuff} shows stuff only if the condition is met*/}
-                        {users &&
-                            users.map((user) => (
+                    {/* the {coondition && stuff} shows stuff only if the condition is met*/}
+                    {successGet == true && users && 
+                        <tbody>
+                            {users.map((user) => (
                                 <tr key={user.userID} style={tableStyle}>
                                     <td style={tableStyle}>{user.userID}</td>
                                     <td style={tableStyle}>{user.email}</td>
                                     <td style={tableStyle}>{user.password}</td>
                                     <td style={tableStyle}>{user.username}</td>
                                 </tr>
-                            ))
-                        }                            
-                    </tbody>
-                </table>
+                            ))}
+                        </tbody>                                           
+                    }                            
+                </table>               
             </div>
         </div>
     

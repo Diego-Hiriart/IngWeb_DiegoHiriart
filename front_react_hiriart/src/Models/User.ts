@@ -6,11 +6,11 @@ export class User{
     private Password: string;
     private Username: string;
 
-    constructor(UserID: number, Email: string, Password: string, Username: string) {
-        this.UserID = UserID;
-        this.Email = Email;
-        this.Password = Password;
-        this.Username = Username;
+    constructor() {
+        this.UserID = 0;
+        this.Email = 'Email';
+        this.Password = 'Password';
+        this.Username = 'Username';
       }
 
 }

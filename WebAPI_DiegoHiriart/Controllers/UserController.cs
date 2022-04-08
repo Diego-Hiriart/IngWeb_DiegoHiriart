@@ -185,7 +185,7 @@ namespace WebAPI_DiegoHiriart.Controllers
         public async Task<IActionResult> UpdateUser(User user)
         {
             string db = APIConfig.ConnectionString;
-            string updateUser = "UPDATE Users SET Email=@0, Password=@1, UserName=@2 WHERE Email = @3";
+            string updateUser = "UPDATE Users SET Email=@0, Password=@1, Username=@2 WHERE UserID = @3";
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password)
                 || string.IsNullOrEmpty(user.Username))//Do no alter if data not complete
             {
@@ -205,7 +205,7 @@ namespace WebAPI_DiegoHiriart.Controllers
                             cmd.Parameters.AddWithValue("@0", user.Email);
                             cmd.Parameters.AddWithValue("@1", user.Password);
                             cmd.Parameters.AddWithValue("@2", user.Username);
-                            cmd.Parameters.AddWithValue("@3", user.Email);
+                            cmd.Parameters.AddWithValue("@3", user.UserID);
                             affectedRows = cmd.ExecuteNonQuery();                         
                         }
                     }

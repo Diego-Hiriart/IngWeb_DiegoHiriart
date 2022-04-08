@@ -28,6 +28,7 @@ function GetUsers(){
                 <h1>Get users</h1>
             </div>
             <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>
+                <h5><b>No users found</b></h5>
                 <table style={tableStyle}>
                     <thead>
                         <tr style={tableStyle}>
@@ -37,8 +38,8 @@ function GetUsers(){
                             <th style={tableStyle}>Username</th>
                         </tr>
                     </thead>
-                    <tbody>                                                
-                    </tbody>
+                    <tbody>                                                                      
+                    </tbody>                   
                 </table>
             </div>
         </div>

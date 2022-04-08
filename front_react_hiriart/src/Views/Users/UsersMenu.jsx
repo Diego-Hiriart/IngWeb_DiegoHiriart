@@ -13,7 +13,7 @@ function UsersMenu(){
                 <button onClick={() => {navigate("/users/search")}}>Search for a user</button>
                 <button onClick={() => {navigate("/users/create")}}>Create new user</button>
                 <button onClick={() => {navigate("/users/edit")}}>Edit user</button>
-                <button>Delete user</button>
+                <button onClick={() => {navigate("/users/delete")}}>Delete user</button>
             </div>
         </div>
     );

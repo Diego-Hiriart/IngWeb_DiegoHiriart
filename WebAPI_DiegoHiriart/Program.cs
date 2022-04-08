@@ -13,8 +13,8 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("http://localhost:3000")//Only the front end address can use it
-                          .WithHeaders(HeaderNames.ContentType);//Allow content type to be in header
-                          //.WithMethods("POST", "GET", "PUT", "DELETE");//Allow all methods
+                          .WithHeaders(HeaderNames.ContentType)//Allow content type to be in header
+                          .WithMethods("POST", "GET", "PUT", "DELETE");//Allow all methods
 
                       });
 });
