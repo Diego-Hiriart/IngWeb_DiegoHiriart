@@ -14,7 +14,8 @@ function DeleteUser(){
     function deltUser(){
         const requestOptions = {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 
+            'Authorization':"bearer "+JSON.parse(localStorage.getItem("authToken")) },
         };
         fetch(urlDel+searchParam.id, requestOptions)
             .then(res => {

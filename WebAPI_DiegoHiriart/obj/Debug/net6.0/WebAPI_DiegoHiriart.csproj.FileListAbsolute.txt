@@ -62,3 +62,14 @@ C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiri
 C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\System.Web.Http.dll
 C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Newtonsoft.Json.dll
 C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Newtonsoft.Json.Bson.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.IdentityModel.Logging.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.IdentityModel.Tokens.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Scrutor.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Swashbuckle.AspNetCore.Filters.dll
+C:\Code-UDLA\Ingenieria-Web\Proyecto_IngenieriaWeb_DiegoHiriart\WebAPI_DiegoHiriart\bin\Debug\net6.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll

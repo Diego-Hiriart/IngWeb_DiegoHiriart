@@ -22,7 +22,8 @@ function EditUser(){
         setSearchParam({email : searchInput.current.value})
         const requestOptions = {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 
+            'Authorization':"bearer "+JSON.parse(localStorage.getItem("authToken")) },
         };     
         fetch(urlGet+searchParam.email, requestOptions)
             .then(res => {
@@ -49,7 +50,8 @@ function EditUser(){
         };
         const requestOptions = {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 
+            'Authorization':"bearer "+JSON.parse(localStorage.getItem("authToken")) },
             body: JSON.stringify(userPut)
         };
         fetch(urlPut, requestOptions)
@@ -101,8 +103,8 @@ function EditUser(){
                         {/*Input needs name to be the same as the property in searchParam we want ot link it to, searchParam value makes it a controlled component, 
                         onChange allows to get handle the value and get it every time the is a change*/} 
                         <input type="text" name="Email" ref={emailInput} defaultValue={user[0].email} value={user.Email} onChange={getInput} placeholder="email" style={inputStyle}></input>
-                        <input type="text" name="Password" ref={passwordInput} defaultValue={user[0].password} value={user[0].Password} onChange={getInput} placeholder="password" style={inputStyle}></input>
                         <input type="text" name="Username" ref={usernameInput} defaultValue={user[0].username} value={user[0].Username} onChange={getInput} placeholder="username" style={inputStyle}></input>
+                        <input type="password" name="Password" ref={passwordInput} value={user[0].Password} onChange={getInput} placeholder="password" style={inputStyle}></input>
                     </div> 
                     <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'10%'}}>                       
                         <button style={inputStyle} onClick={edit}>Edit</button>

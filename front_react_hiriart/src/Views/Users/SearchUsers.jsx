@@ -14,7 +14,8 @@ function SearchUsers(){
     function search(){
         const requestOptions = {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 
+            'Authorization':"bearer "+JSON.parse(localStorage.getItem("authToken")) },
         };
         fetch(urlGet+searchParam.email, requestOptions)
             .then(res => {
@@ -61,7 +62,6 @@ function SearchUsers(){
                         <tr style={tableStyle}>
                             <th style={tableStyle}>ID</th>
                             <th style={tableStyle}>Email</th>
-                            <th style={tableStyle}>Password</th>
                             <th style={tableStyle}>Username</th>
                         </tr>
                     </thead>
@@ -72,7 +72,6 @@ function SearchUsers(){
                                 <tr key={user.userID} style={tableStyle}>
                                     <td style={tableStyle}>{user.userID}</td>
                                     <td style={tableStyle}>{user.email}</td>
-                                    <td style={tableStyle}>{user.password}</td>
                                     <td style={tableStyle}>{user.username}</td>
                                 </tr>
                             ))}

@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using WebAPI_DiegoHiriart.Models;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI_DiegoHiriart.Controllers
 {
@@ -12,15 +15,18 @@ namespace WebAPI_DiegoHiriart.Controllers
     public class UserController : ControllerBase
     {
         [HttpPost]//Maps method to Post request
-        public async Task<ActionResult<List<User>>> CreateUser(User user)
+        public async Task<ActionResult<List<UserDto>>> CreateUser(UserDto user)
         {
             string db = APIConfig.ConnectionString;
-            string createUser = "INSERT INTO Users(Email, Password, Username) values(@0, @1, @2)";
+            string createUser = "INSERT INTO Users(Email, Username, PasswordHash, PasswordSalt) values(@0, @1, @2, @3)";
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password)
                 || string.IsNullOrEmpty(user.Username))//Do no create if data not complete
             {
                 return BadRequest("Incomplete data");
             }
+            List<byte[]> passwordHashes = CreatePasswordHash(user.Password);
+            User userDb = new User(user.UserID, user.Email, user.Username,
+                passwordHashes[0], passwordHashes[1]);
             try
             {
                 using (SqlConnection conn = new SqlConnection(db))
@@ -31,9 +37,10 @@ namespace WebAPI_DiegoHiriart.Controllers
                         using (SqlCommand cmd = conn.CreateCommand())
                         {
                             cmd.CommandText = createUser;
-                            cmd.Parameters.AddWithValue("@0", user.Email);//Replace the parameteres of the string
-                            cmd.Parameters.AddWithValue("@1", user.Password);
-                            cmd.Parameters.AddWithValue("@2", user.Username);
+                            cmd.Parameters.AddWithValue("@0", userDb.Email);//Replace the parameteres of the string
+                            cmd.Parameters.AddWithValue("@1", userDb.Username);
+                            cmd.Parameters.AddWithValue("@2", userDb.PasswordHash);
+                            cmd.Parameters.AddWithValue("@3", userDb.PasswordSalt);
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -48,12 +55,12 @@ namespace WebAPI_DiegoHiriart.Controllers
         }
 
 
-        [HttpGet]//Maps this method to the GET request (read)
-        public async Task<ActionResult<List<User>>> ReadUsers()
+        [HttpGet, Authorize(Roles = "admin")]//Maps this method to the GET request (read), only users with the role Admin can call this method. Returns 403 if wrong role, 401 if no token 
+        public async Task<ActionResult<List<UserDto>>> ReadUsers()
         {
-            List<User> users = new List<User>();
+            List<UserDto> users = new List<UserDto>();
             string db = APIConfig.ConnectionString;
-            string readUsers = "SELECT * FROM Users";
+            string readUsers = "SELECT UserID, Email, Username FROM Users";
             try
             {
                 using (SqlConnection conn = new SqlConnection(db))
@@ -68,12 +75,11 @@ namespace WebAPI_DiegoHiriart.Controllers
                             {
                                 while (reader.Read())
                                 {
-                                    var user = new User();
+                                    var user = new UserDto();
                                     user.UserID = reader.GetInt64(0);//Get a long int from the first column
                                     //Use castings so that nulls get created if needed
                                     user.Email = reader[1] as string;
-                                    user.Password = reader[2] as string;
-                                    user.Username = reader[3] as string;
+                                    user.Username = reader[2] as string;
                                     users.Add(user);//Add user to list
                                 }
                             }
@@ -89,12 +95,12 @@ namespace WebAPI_DiegoHiriart.Controllers
             }
         }
 
-        [HttpGet("full-match/{email}")]//Maps this method to the GET request (read) for a specific email
-        public async Task<ActionResult<List<User>>> ReadUserEmailFullMatch(string email)
+        [HttpGet("full-match/{email}"), Authorize]//Maps this method to the GET request (read) for a specific email
+        public async Task<ActionResult<List<UserDto>>> ReadUserEmailFullMatch(string email)
         {
-            List<User> users = new List<User>();
+            List<UserDto> users = new List<UserDto>();
             string db = APIConfig.ConnectionString;
-            string readUsers = "SELECT * FROM Users WHERE Email = @0";
+            string readUsers = "SELECT UserId, Email, Username FROM Users WHERE Email = @0";
             try
             {
                 using (SqlConnection conn = new SqlConnection(db))
@@ -110,12 +116,11 @@ namespace WebAPI_DiegoHiriart.Controllers
                             {
                                 while (reader.Read())
                                 {
-                                    var user = new User();
+                                    var user = new UserDto();
                                     user.UserID = reader.GetInt64(0);//Get a long int from the first column
                                     //Use castings so that nulls get created if needed
                                     user.Email = reader[1] as string;
-                                    user.Password = reader[2] as string;
-                                    user.Username = reader[3] as string;
+                                    user.Username = reader[2] as string;
                                     users.Add(user);//Add user to list
                                 }
                             }
@@ -135,12 +140,12 @@ namespace WebAPI_DiegoHiriart.Controllers
             return BadRequest("User not found");
         }
 
-        [HttpGet("partial-match/{email}")]//Maps this method to the GET request (read) for a partial email
-        public async Task<ActionResult<List<User>>> ReadUserEmailPartialMatch(string email)
+        [HttpGet("partial-match/{email}"), Authorize]//Maps this method to the GET request (read) for a partial email
+        public async Task<ActionResult<List<UserDto>>> ReadUserEmailPartialMatch(string email)
         {
-            List<User> users = new List<User>();
+            List<UserDto> users = new List<UserDto>();
             string db = APIConfig.ConnectionString;
-            string readUsers = "SELECT * FROM Users WHERE Email LIKE @0";//WHERE string LIKE %substring%
+            string readUsers = "SELECT UserId, Email, Username FROM Users WHERE Email LIKE @0";//WHERE string LIKE %substring%
             try
             {
                 using (SqlConnection conn = new SqlConnection(db))
@@ -156,12 +161,11 @@ namespace WebAPI_DiegoHiriart.Controllers
                             {
                                 while (reader.Read())
                                 {
-                                    var user = new User();
+                                    var user = new UserDto();
                                     user.UserID = reader.GetInt64(0);//Get a long int from the first column
                                     //Use castings so that nulls get created if needed
                                     user.Email = reader[1] as string;
-                                    user.Password = reader[2] as string;
-                                    user.Username = reader[3] as string;
+                                    user.Username = reader[2] as string;
                                     users.Add(user);//Add user to list
                                 }
                             }
@@ -181,16 +185,19 @@ namespace WebAPI_DiegoHiriart.Controllers
             return BadRequest("User not found");
         }
 
-        [HttpPut]//Maps the method to PUT, that is update a User
-        public async Task<IActionResult> UpdateUser(User user)
+        [HttpPut, Authorize]//Maps the method to PUT, that is update a User
+        public async Task<IActionResult> UpdateUser(UserDto user)
         {
             string db = APIConfig.ConnectionString;
-            string updateUser = "UPDATE Users SET Email=@0, Password=@1, Username=@2 WHERE UserID = @3";
+            string updateUser = "UPDATE Users SET Email=@0, Username=@1, PasswordHash=@2, PasswordSalt=@3 WHERE UserID = @4";
             if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.Password)
                 || string.IsNullOrEmpty(user.Username))//Do no alter if data not complete
             {
                 return BadRequest("Incomplete data or non-existent user");
             }
+            List<byte[]> passwordHashes = CreatePasswordHash(user.Password);
+            User userDb = new User(user.UserID, user.Email, user.Username, 
+                passwordHashes[0], passwordHashes[1]);
             try
             {
                 int affectedRows = 0;
@@ -202,10 +209,11 @@ namespace WebAPI_DiegoHiriart.Controllers
                         using (SqlCommand cmd = conn.CreateCommand())
                         {
                             cmd.CommandText = updateUser;
-                            cmd.Parameters.AddWithValue("@0", user.Email);
-                            cmd.Parameters.AddWithValue("@1", user.Password);
-                            cmd.Parameters.AddWithValue("@2", user.Username);
-                            cmd.Parameters.AddWithValue("@3", user.UserID);
+                            cmd.Parameters.AddWithValue("@0", userDb.Email);
+                            cmd.Parameters.AddWithValue("@1", userDb.Username);
+                            cmd.Parameters.AddWithValue("@2", userDb.PasswordHash);
+                            cmd.Parameters.AddWithValue("@3", userDb.PasswordSalt);
+                            cmd.Parameters.AddWithValue("@4", userDb.UserID);
                             affectedRows = cmd.ExecuteNonQuery();                         
                         }
                     }
@@ -224,7 +232,7 @@ namespace WebAPI_DiegoHiriart.Controllers
             return BadRequest("User not found");
         }
 
-        [HttpDelete("{id}")]//Maps the method to DELETE by id
+        [HttpDelete("{id}"), Authorize(Roles = "Admin")]//Maps the method to DELETE by id
         public async Task<IActionResult> DeleteUser(int id)
         {
             string db = APIConfig.ConnectionString;
@@ -258,5 +266,18 @@ namespace WebAPI_DiegoHiriart.Controllers
             }
             return BadRequest("User not found");
         }
+
+        private List<byte[]> CreatePasswordHash(string password)
+        {
+            byte[] passwordHash;
+            byte[] passwordSalt;
+            using (var hmac = new HMACSHA512())//hmac is a cryptography algorithm it uses any key here, SHA512 hash is 64 bytes and secret key 128, database must store the same sizes or the trailing zeros change the value
+            {
+                passwordSalt = hmac.Key;//Random key for cryptography
+                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            }
+            return new List<byte[]> { passwordHash, passwordSalt };
+        }
     }
+
 }

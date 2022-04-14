@@ -8,9 +8,9 @@ export class User{
 
     constructor() {
         this.UserID = 0;
-        this.Email = 'Email';
-        this.Password = 'Password';
-        this.Username = 'Username';
+        this.Email = '';
+        this.Password = '';
+        this.Username = '';
       }
 
 }

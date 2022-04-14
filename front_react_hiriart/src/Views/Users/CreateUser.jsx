@@ -10,7 +10,8 @@ function CreateUser(){
     function create(){
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 
+            'Authorization':"bearer "+JSON.parse(localStorage.getItem("authToken")) },
             body: JSON.stringify(user)
         };
         console.log(JSON.stringify(user))
@@ -42,9 +43,9 @@ function CreateUser(){
             <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'40%'}}>
                 {/*Input needs name to be the same as the property in state we want ot link it to, state value makes it a controlled component, 
                 onChange allows to get handle the value and get it every time the is a change*/}
-                <input type="text" name="Email" value={user.Email} onChange={getInput} placeholder="email" style={inputStyle}></input>
-                <input type="text" name="Password" value={user.Password} onChange={getInput} placeholder="password" style={inputStyle}></input>
-                <input type="text" name="Username" value={user.Username} onChange={getInput} placeholder="username" style={inputStyle}></input>
+                <input type="text" name="Email" defaultValue='' value={user.Email} onChange={getInput} placeholder="email" style={inputStyle}></input>
+                <input type="text" name="Username" defaultValue='' value={user.Username} onChange={getInput} placeholder="username" style={inputStyle}></input>
+                <input type="password" name="Password" defaultValue='' value={user.Password} onChange={getInput} placeholder="password" style={inputStyle}></input>              
                 <br/>                
             </div>
             <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'10%'}}>              
