@@ -232,7 +232,7 @@ namespace WebAPI_DiegoHiriart.Controllers
             return BadRequest("User not found");
         }
 
-        [HttpDelete("{id}"), Authorize(Roles = "Admin")]//Maps the method to DELETE by id
+        [HttpDelete("{id}"), Authorize(Roles = "admin")]//Maps the method to DELETE by id
         public async Task<IActionResult> DeleteUser(int id)
         {
             string db = APIConfig.ConnectionString;

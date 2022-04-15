@@ -15,7 +15,7 @@ function Login(){
     //Check if the user is logged in as soon as this page is entered
     useEffect(() => {
         checklogin();
-    }, [])  
+    }, [isLoggedIn])  
 
     //Checks if the token currently stored is valid
     function checklogin(){
@@ -68,35 +68,36 @@ function Login(){
 
     const content=       
         <div className="container">
-            {isLoggedIn === false && success != true &&
+            <h2>Log in to your account</h2>
+            {isLoggedIn === false && success !== true &&
                 <>
-                <br></br>
+                <br/>
                 <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%', flexDirection:'column'}}>
                     <input type="text" name="UserEmail" defaultValue='' value={credentials.UserEmail} placeholder="username or email" onChange={getInput} style={inputStyle}></input>
                     <input type="password" name="Password" defaultValue='' value={credentials.Password} placeholder="password" onChange={getInput} style={inputStyle}></input>                    
                 </div>
-                <br></br>
+                <br/>
                 <div style={{display: 'flex', flexDirection:'row',  justifyContent:"center", alignItems:'center', width: '70%'}}>
                     <button style={{margin:'8px'}} onClick={tryLogin}>Login</button>
                     {/*<button style={{margin:'8px'}}>Forgot Password?</button>*/}
                 </div>
                 {success === false &&
-                    <h5><b>Log in failed: {logInResult}</b></h5>
+                    <h5><br/><b>Log in failed: {logInResult}</b></h5>
                 }
                 </>
             }
             {isLoggedIn === true &&
                 <>
-                <br></br>
+                <br/>
                 <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%', flexDirection:'column'}}>
-                    <h5><b>You are already logged in</b></h5>     
+                    <h5><br/><b>You are already logged in</b></h5>     
                     <button onClick={() => {navigate("/logout")}}>Log out</button>           
                 </div>
                 <br></br>
                 </>
             }
             {success === true &&
-                <h5><b>Log in successful</b></h5>            
+                <h5><br/><b>Log in successful</b></h5>            
             }        
         </div>
 

@@ -1,6 +1,11 @@
 import {React, useState, createRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 function EditUser(){
+    let navigate = useNavigate();
+    const [is400, setIs400] = useState(false);
+    const [is401, setIs401] = useState(false);
+    const [is403, setIs403] = useState(false);
     const urlPut = 'https://localhost:7017/api/users';
     const urlGet = 'https://localhost:7017/api/users/full-match/';
     const [user, setUser] = useState(null);
@@ -32,9 +37,18 @@ function EditUser(){
                     .then(json => setUser(json));
                     setSuccessGet(true);
                     setSuccessPut(null);//Reset so it doesnt show the old result message                             
-                }else{
+                }else if(res.status === 400){
+                    setSuccessGet(false)
+                    setSuccessPut(null);//Reset so it doesnt show the old result message
+                    setIs400(true)
+                }else if(res.status === 401){
                     setSuccessGet(false);
                     setSuccessPut(null);//Reset so it doesnt show the old result message
+                    setIs401(true)
+                }else if(res.status === 403){
+                    setSuccessGet(false);
+                    setSuccessPut(null);
+                    setIs403(true)
                 }
             }
         )
@@ -84,7 +98,7 @@ function EditUser(){
 
     const inputStyle = {'margin':'2px'};
 
-    const content =
+    let content =
         <div className="container">
             <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width: '70%'}}>
                 <h1>Edit user</h1>
@@ -97,7 +111,23 @@ function EditUser(){
                 <button style={inputStyle} onClick={search}>Search</button>
                 <br/>
             </div>
-                {successGet == true && user != null ?
+        </div>
+
+    if((successGet && !is401 && !is403) || is400){
+        content =
+        <div className="container">
+            <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width: '70%'}}>
+                <h1>Edit user</h1>
+                <p>Input the email you are searching for (full match only)</p>                  
+            </div>
+            <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width: '40%'}}>
+                <input type="text" name="email" ref={searchInput} value={searchParam.email} onChange={getSearchInput} placeholder="email" style={inputStyle}></input>              
+            </div>
+            <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width: '10%'}}>
+                <button style={inputStyle} onClick={search}>Search</button>
+                <br/>
+            </div>
+                {successGet === true && user != null ?
                     <>
                     <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'40%'}}>
                         {/*Input needs name to be the same as the property in searchParam we want ot link it to, searchParam value makes it a controlled component, 
@@ -112,7 +142,7 @@ function EditUser(){
                     </div>           
                     </>
                 :   
-                    <h5><b>{successGet != null && successGet == false ? "The user you want to edit was not found" : ""}</b></h5>                  
+                    <h5><b>{successGet != null && successGet === false ? "The user you want to edit was not found" : ""}</b></h5>                  
                 }                                        
             <div style={{display: 'flex',  justifyContent:'normal', alignItems:'center', width: '70%'}}>
                 {successPut != null &&
@@ -122,6 +152,23 @@ function EditUser(){
                 }     
             </div>
         </div>
+    }else if(is401 && successGet != null){
+        content =
+            <div className="container">
+                <div style={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', width: '70%'}}>
+                    <h3><br/>You must be logged in to view this</h3>
+                    <button onClick={() => {navigate("/login")}}>Log in</button>
+                </div>
+            </div>
+    }else if(is401 && successGet != null){
+        content =
+            <div className="container">
+                <div style={{display: 'flex', flexDirection:'column',  justifyContent:'center', alignItems:'center', width: '70%'}}>
+                    <h3><br/>You are not allowed to view this</h3>
+                    <button onClick={() => {navigate("/users")}}>Return to menu</button>
+                </div>
+            </div>
+    }
     
     return(
         <div>

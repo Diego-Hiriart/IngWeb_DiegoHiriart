@@ -1,8 +1,13 @@
 import {React, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SearchUsers(){
+    let navigate = useNavigate();
+    const [is400, setIs400] = useState(false);
+    const [is401, setIs401] = useState(false);
+    const [is403, setIs403] = useState(false);
     const urlGet = 'https://localhost:7017/api/users/partial-match/'
-    const [users, setUsers] = useState(null);{/*users is empty by default */}
+    const [users, setUsers] = useState(null);//users is empty by default
     const [successGet, setSuccessGet] = useState(null);
     const [searchParam, setSearchParam] = useState(//"searchParam" object
         {
@@ -23,8 +28,15 @@ function SearchUsers(){
                     res.json()
                     .then(json => setUsers(json));
                     setSuccessGet(true);
-                }else{
+                }else if(res.status === 400){
                     setSuccessGet(false);
+                    setIs400(true)
+                }else if(res.status === 401){
+                    setSuccessGet(false);
+                    setIs401(true)
+                }else if(res.status === 403){
+                    setSuccessGet(false);
+                    setIs403(true)
                 }
             })
     } 
@@ -40,7 +52,7 @@ function SearchUsers(){
     const inputStyle = {'margin':'2px'};
     const tableStyle = {"borderWidth":"1px", 'borderColor':"#aaaaaa", 'borderStyle':'solid', 'padding':'5px'};
 
-    const content =
+    let content =
         <div className="container">
             <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width: '70%'}}>
                 <h1>Search users</h1>
@@ -56,7 +68,7 @@ function SearchUsers(){
                 <br/>                
             </div>
             <div style={{display: 'flex', flexDirection:'column', justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>
-                <h5><b>{successGet == false ? "No users found with requested email" : "Search for a user by email"}</b></h5>
+                <h5><b>{successGet === false ? "No users found with requested email" : "Search for a user by email"}</b></h5>
                 <table style={tableStyle}>
                     <thead>
                         <tr style={tableStyle}>
@@ -65,21 +77,70 @@ function SearchUsers(){
                             <th style={tableStyle}>Username</th>
                         </tr>
                     </thead>
-                    {/* the {coondition && stuff} shows stuff only if the condition is met*/}
-                    {successGet == true && users && 
                         <tbody>
-                            {users.map((user) => (
-                                <tr key={user.userID} style={tableStyle}>
-                                    <td style={tableStyle}>{user.userID}</td>
-                                    <td style={tableStyle}>{user.email}</td>
-                                    <td style={tableStyle}>{user.username}</td>
-                                </tr>
-                            ))}
-                        </tbody>                                           
-                    }                            
+                        </tbody>                                                                       
                 </table>               
             </div>
         </div>
+
+    if((successGet  && !is401 && !is403) || is400){
+        content =
+            <div className="container">
+                <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width: '70%'}}>
+                    <h1>Search users</h1>
+                    <p>Input the email you are searching for (supports partial match)</p>                  
+                </div>
+                <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'40%'}}>
+                    {/*Input needs name to be the same as the property in stsearchParamate we want ot link it to, searchParam value makes it a controlled component, 
+                    onChange allows to get handle the value and get it every time the is a change*/}
+                    <input type="text" name="email" value={searchParam.email} onChange={getSearchInput} placeholder="email" style={inputStyle}></input>
+                </div>
+                <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'10%'}}>
+                    <button style={inputStyle} onClick={search}>Search</button>
+                    <br/>                
+                </div>
+                <div style={{display: 'flex', flexDirection:'column', justifyContent:'space-evenly', alignItems:'center', width: '70%'}}>
+                    <h5><b>{successGet === false ? "No users found with requested email" : "Search for a user by email"}</b></h5>
+                    <table style={tableStyle}>
+                        <thead>
+                            <tr style={tableStyle}>
+                                <th style={tableStyle}>ID</th>
+                                <th style={tableStyle}>Email</th>
+                                <th style={tableStyle}>Username</th>
+                            </tr>
+                        </thead>
+                        {/* the {coondition && stuff} shows stuff only if the condition is met*/}
+                        {successGet === true && users && 
+                            <tbody>
+                                {users.map((user) => (
+                                    <tr key={user.userID} style={tableStyle}>
+                                        <td style={tableStyle}>{user.userID}</td>
+                                        <td style={tableStyle}>{user.email}</td>
+                                        <td style={tableStyle}>{user.username}</td>
+                                    </tr>
+                                ))}
+                            </tbody>                                           
+                        }                            
+                    </table>               
+                </div>
+            </div>
+    }else if(is401 && successGet != null){
+        content =
+            <div className="container">
+                <div style={{display: 'flex', flexDirection:'column', justifyContent:'center', alignItems:'center', width: '70%'}}>
+                    <h3><br/>You must be logged in to view this</h3>
+                    <button onClick={() => {navigate("/login")}}>Log in</button>
+                </div>
+            </div>
+    }else if(is403 && successGet != null){
+        content =
+            <div className="container">
+                <div style={{display: 'flex', flexDirection:'column',  justifyContent:'center', alignItems:'center', width: '70%'}}>
+                    <h3><br/>You are not allowed to view this</h3>
+                    <button onClick={() => {navigate("/users")}}>Return to menu</button>
+                </div>
+            </div>
+    }
     
     return(
         <div>

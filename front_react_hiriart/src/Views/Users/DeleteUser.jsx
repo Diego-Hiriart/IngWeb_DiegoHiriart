@@ -1,5 +1,4 @@
-import {React, useState, Component } from "react";
-import {User} from "../../Models/User.ts"
+import {React, useState } from "react";
 
 function DeleteUser(){
     const urlDel = 'https://localhost:7017/api/users/';
@@ -50,7 +49,7 @@ function DeleteUser(){
                 <button style={inputStyle} onClick={deltUser}>Delete</button>
                 <br/>
             </div>
-            {successDel == true ? 
+            {successDel === true ? 
                 <div style={{display: 'flex', 'flexDirection':'column',  justifyContent:'normal', alignItems:'normal', width:'40%'}}>
                     <h5><b>User deleted</b></h5>                              
                 </div>                
