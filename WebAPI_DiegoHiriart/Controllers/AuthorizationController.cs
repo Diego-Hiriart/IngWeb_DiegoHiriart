@@ -79,6 +79,12 @@ namespace WebAPI_DiegoHiriart.Controllers
             return Ok("Is logged in, token valid");
         }
 
+        [HttpGet("checkadmin"), Authorize(Roles="admin")]
+        public async Task<ActionResult<string>> CheckAdminRole()//If the function return anythng but ok, client will know token is not valid, user hasnt logged in, or is forbidden
+        {
+            return Ok("Is logged in, token valid, role valid");
+        }
+
         private string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>();
