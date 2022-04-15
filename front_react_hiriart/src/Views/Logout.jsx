@@ -5,7 +5,6 @@ function Logout(){
     let navigate = useNavigate();
     const urlCheckLogin = 'https://localhost:7017/api/auth/checklogin'
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    localStorage.removeItem("authToken")
     console.log(JSON.parse(localStorage.getItem("authToken")))
 
     //Check if the user is logged in as soon as this page is entered
@@ -34,6 +33,7 @@ function Logout(){
     <div className="container">
         {isLoggedIn === true ?
             <div style={{display: 'flex',  justifyContent:'space-evenly', alignItems:'center', width: '70%', flexDirection:'column'}}>
+                {localStorage.removeItem("authToken")}
                 <h5><br/><b>You have logged out</b></h5>
                 <button onClick={() => {navigate("/login")}}>Log in</button>
             </div>

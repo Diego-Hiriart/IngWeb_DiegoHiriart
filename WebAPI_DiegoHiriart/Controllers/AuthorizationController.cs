@@ -22,7 +22,8 @@ namespace WebAPI_DiegoHiriart.Controllers
         public async Task<ActionResult<string>> Login(Credentials request)
         {
             string db = APIConfig.ConnectionString;
-            string checkUserExists = "SELECT * FROM Users WHERE Email = @0 OR Username = @0";
+            //COLLATE SQL_Latin1_General_CP1_CS_AS allows case sentitive compare
+            string checkUserExists = "SELECT * FROM Users WHERE Email = @0 OR Username = @0 COLLATE SQL_Latin1_General_CP1_CS_AS";
             User user = new User();
             try
             {
@@ -107,7 +108,7 @@ namespace WebAPI_DiegoHiriart.Controllers
                 Debug.WriteLine("Regular user token creation");
             }   
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(APIConfig.Token));//New key using the key ffrom APIConfig
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(APIConfig.Token));//New key using the key from APIConfig
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
